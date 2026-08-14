@@ -231,6 +231,15 @@ tabButtons.forEach(button => {
       loadHistory();
     }
   });
+
+  // Explicitly activate on Enter or Space when focused (screen reader virtual cursor compatibility)
+  button.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      button.click();
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  });
 });
 
 // Arrow key navigation for tabs (standard keyboard control)
@@ -1148,6 +1157,16 @@ document.addEventListener('keydown', (e) => {
   // Switch tabs using Alt + 1, 2, 3, 4
   if (e.altKey && ['1', '2', '3', '4'].includes(e.key)) {
     const idx = parseInt(e.key, 10) - 1;
+    if (tabButtons[idx]) {
+      tabButtons[idx].click();
+      tabButtons[idx].focus();
+      e.preventDefault();
+    }
+  }
+
+  // Switch tabs using Ctrl + 1, 2, 3, 4, 5
+  if (e.ctrlKey && ['1', '2', '3', '4', '5'].includes(e.key)) {
+    const idx = Math.min(parseInt(e.key, 10) - 1, tabButtons.length - 1);
     if (tabButtons[idx]) {
       tabButtons[idx].click();
       tabButtons[idx].focus();
