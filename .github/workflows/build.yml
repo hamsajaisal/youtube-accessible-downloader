@@ -35,7 +35,8 @@ jobs:
       run: Compress-Archive -Path publish\YoutubeDownloader.exe -DestinationPath YouTube.Accessible.Downloader.Portable.zip
 
     - name: Compile Windows Setup Installer (Inno Setup)
-      run: & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" installer.iss
+      run: |
+        & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" installer.iss
 
     - name: Upload Build Artifacts (Dev/PR testing)
       if: startsWith(github.ref, 'refs/tags/') != true
