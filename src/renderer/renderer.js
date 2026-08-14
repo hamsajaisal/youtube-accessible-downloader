@@ -180,9 +180,15 @@ async function initApp() {
   
   announceToSR('YouTube Accessible Downloader launched. Paste a link to begin.');
 
-  // If FFmpeg is missing, prompt the user to download it automatically on startup
-  if (!globalSettings.ffmpegExists) {
-    setTimeout(() => {
+  // If FFmpeg is missing, prompt the user to download it sequentially on startup
+  function checkFfmpegStartup() {
+    if (!globalSettings.ffmpegExists) {
+      // If the yt-dlp update consent modal or downloading progress modal is open, wait and try again
+      if (dlgUpdate.open || dlgInfo.open) {
+        setTimeout(checkFfmpegStartup, 2000);
+        return;
+      }
+      
       const confirmFFmpeg = confirm('FFmpeg is missing. This helper is required to download high-quality videos (1080p, 4K) and convert audio formats.\n\nWould you like the application to download and configure FFmpeg automatically now?');
       if (confirmFFmpeg) {
         btnInstallFfmpeg.disabled = true;
@@ -191,8 +197,10 @@ async function initApp() {
           btnInstallFfmpeg.disabled = false;
         });
       }
-    }, 1500); // 1.5 second delay so they hear the startup announcement first
+    }
   }
+
+  checkFfmpegStartup();
 }
 
 
@@ -205,10 +213,8 @@ tabButtons.forEach(button => {
     // Update Tab headers
     tabButtons.forEach(btn => {
       btn.setAttribute('aria-selected', 'false');
-      btn.setAttribute('tabindex', '-1');
     });
     button.setAttribute('aria-selected', 'true');
-    button.setAttribute('tabindex', '0');
 
     // Show/Hide Panels
     tabPanels.forEach(panel => {
