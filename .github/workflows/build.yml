@@ -45,6 +45,20 @@ jobs:
         path: build_log.txt
         retention-days: 1
 
+    - name: Create Issue on Failure
+      if: failure()
+      shell: bash
+      run: |
+        # Check if there is already an open issue for build logs to avoid spam
+        existing_issue=$(gh issue list --search "Build Failure Logs in:title" --json number --jq '.[0].number')
+        if [ -n "$existing_issue" ]; then
+          gh issue comment "$existing_issue" --body-file build_log.txt
+        else
+          gh issue create --title "Build Failure Logs" --body-file build_log.txt
+        fi
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     - name: Zip Standalone Portable Executable
       run: Compress-Archive -Path publish\YoutubeDownloader.exe -DestinationPath YouTube.Accessible.Downloader.Portable.zip
 
