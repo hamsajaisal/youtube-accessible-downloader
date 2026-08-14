@@ -1,0 +1,8 @@
+node_modules/
+dist/
+bin/
+*.zip
+*.exe
+settings.json
+history.json
+.DS_Store

@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube Accessible Downloader</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Screen reader live announcement area -->
+  <div id="sr-announcement" class="sr-only" role="status" aria-live="polite"></div>
+
+  <div class="app-container">
+    
+    <!-- Header Section -->
+    <header class="app-header">
+      <h1 id="app-title">YouTube Accessible Downloader</h1>
+      <div class="mode-selector">
+        <label for="mode-toggle" class="mode-label">Advanced Settings Mode</label>
+        <button id="mode-toggle" role="switch" aria-checked="false" class="switch-btn">
+          <span class="switch-slider"></span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Navigation Tabs -->
+    <nav class="app-nav" aria-label="Main Navigation">
+      <ul role="tablist">
+        <li role="presentation">
+          <button id="tab-downloader" role="tab" aria-selected="true" aria-controls="panel-downloader" tabindex="0">Downloader</button>
+        </li>
+        <li role="presentation">
+          <button id="tab-queue" role="tab" aria-selected="false" aria-controls="panel-queue" tabindex="-1">
+            Download Queue <span id="queue-badge" class="badge hidden" aria-hidden="true">0</span>
+          </button>
+        </li>
+        <li role="presentation">
+          <button id="tab-history" role="tab" aria-selected="false" aria-controls="panel-history" tabindex="-1">History</button>
+        </li>
+        <li role="presentation">
+          <button id="tab-settings" role="tab" aria-selected="false" aria-controls="panel-settings" tabindex="-1">Settings</button>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Main Panels -->
+    <main class="app-main">
+
+      <!-- PANEL 1: DOWNLOADER -->
+      <section id="panel-downloader" role="tabpanel" aria-labelledby="tab-downloader" class="tab-panel">
+        <h2 class="sr-only">Video Downloader</h2>
+        
+        <!-- Input URL Card -->
+        <div class="card">
+          <div class="input-group">
+            <label for="input-url" class="input-label">Paste YouTube Video or Playlist Link</label>
+            <div class="input-row">
+              <input type="url" id="input-url" class="text-input" placeholder="https://www.youtube.com/watch?v=..." autocomplete="off" required>
+              <button id="btn-analyze" class="btn btn-primary">Analyze Link</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Analyzer Loading Indicator -->
+        <div id="analyzer-loading" class="card loading-card hidden">
+          <div class="spinner" aria-hidden="true"></div>
+          <p id="loading-text">Analyzing link... Please wait.</p>
+        </div>
+
+        <!-- Media Info Details Card (Populated after analysis) -->
+        <div id="media-card" class="card hidden">
+          <div class="media-details">
+            <img id="media-thumbnail" src="" alt="" class="media-thumb" aria-hidden="true">
+            <div class="media-text">
+              <h3 id="media-title" class="media-title-heading">Video Title</h3>
+              <p class="media-info"><span class="sr-only">Uploader:</span> <span id="media-uploader">Channel Name</span></p>
+              <p class="media-info"><span class="sr-only">Duration:</span> <span id="media-duration">0:00</span></p>
+              <p id="playlist-notice" class="badge-playlist hidden">Playlist</p>
+            </div>
+          </div>
+
+          <!-- Configuration Form -->
+          <div class="download-config-form">
+            <div class="form-row">
+              <!-- Mode: Video vs Audio -->
+              <div class="form-group">
+                <label for="select-type">Download Type</label>
+                <select id="select-type" class="select-input">
+                  <option value="video">Video + Audio</option>
+                  <option value="audio">Audio Only</option>
+                </select>
+              </div>
+
+              <!-- Format (MP4/MP3 etc) -->
+              <div class="form-group">
+                <label for="select-format">File Format</label>
+                <select id="select-format" class="select-input">
+                  <!-- Dynamically populated -->
+                </select>
+              </div>
+
+              <!-- Quality -->
+              <div class="form-group">
+                <label for="select-quality">Quality</label>
+                <select id="select-quality" class="select-input">
+                  <!-- Dynamically populated -->
+                </select>
+              </div>
+            </div>
+
+            <!-- Folder location selector -->
+            <div class="form-group margin-top-md">
+              <label for="folder-display">Save Location</label>
+              <div class="input-row">
+                <input type="text" id="folder-display" class="text-input" readonly aria-readonly="true">
+                <button id="btn-browse-folder" class="btn btn-secondary" aria-label="Choose save folder">Browse...</button>
+              </div>
+            </div>
+
+            <!-- ADVANCED OPTIONS PANEL (Hidden/Toggled by Advanced Switch) -->
+            <div id="advanced-options" class="advanced-section hidden">
+              <h4 class="section-title-sm">Advanced Options</h4>
+              
+              <!-- Partial Downloading -->
+              <div class="advanced-card">
+                <div class="checkbox-row">
+                  <input type="checkbox" id="check-partial" class="checkbox-input">
+                  <label for="check-partial" class="checkbox-label">Download only a specific portion of this video</label>
+                </div>
+                <div id="partial-times-row" class="form-row sub-row hidden">
+                  <div class="form-group-half">
+                    <label for="input-time-start">Start Time (Format: hh:mm:ss or mm:ss)</label>
+                    <input type="text" id="input-time-start" class="text-input" placeholder="00:00">
+                  </div>
+                  <div class="form-group-half">
+                    <label for="input-time-end">End Time (Format: hh:mm:ss or mm:ss)</label>
+                    <input type="text" id="input-time-end" class="text-input" placeholder="02:30">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Subtitles Settings -->
+              <div class="advanced-card">
+                <div class="checkbox-row">
+                  <input type="checkbox" id="check-subtitles" class="checkbox-input">
+                  <label for="check-subtitles" class="checkbox-label">Download subtitles</label>
+                </div>
+                <div id="subtitles-row" class="form-row sub-row hidden">
+                  <div class="form-group">
+                    <label for="select-sub-lang">Language</label>
+                    <select id="select-sub-lang" class="select-input">
+                      <option value="en">English (en)</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="select-sub-type">Subtitle Type</label>
+                    <select id="select-sub-type" class="select-input">
+                      <option value="manual">Manually Created Only</option>
+                      <option value="auto">Include Automatically Generated</option>
+                    </select>
+                  </div>
+                  <div class="checkbox-row-sub form-group">
+                    <input type="checkbox" id="check-embed-subs" class="checkbox-input">
+                    <label for="check-embed-subs" class="checkbox-label">Embed subtitles inside video file</label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Metadata & Thumbnail -->
+              <div class="advanced-card flex-row">
+                <div class="checkbox-row margin-right-lg">
+                  <input type="checkbox" id="check-metadata" class="checkbox-input" checked>
+                  <label for="check-metadata" class="checkbox-label">Embed media details/metadata</label>
+                </div>
+                <div class="checkbox-row">
+                  <input type="checkbox" id="check-thumbnail" class="checkbox-input" checked>
+                  <label for="check-thumbnail" class="checkbox-label">Embed thumbnail/album artwork</label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Start Action Button -->
+            <div class="form-actions margin-top-lg">
+              <button id="btn-start-download" class="btn btn-success btn-large">Add to Download Queue</button>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Playlist Selector Dialog Trigger Card (If playlist analyzed) -->
+        <div id="playlist-card" class="card hidden">
+          <div class="playlist-info-row">
+            <div>
+              <h3 id="playlist-title" class="media-title-heading">Playlist Title</h3>
+              <p><span id="playlist-count">0</span> videos found</p>
+            </div>
+            <button id="btn-open-playlist-dialog" class="btn btn-secondary">Select Videos to Download...</button>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- PANEL 2: DOWNLOAD QUEUE -->
+      <section id="panel-queue" role="tabpanel" aria-labelledby="tab-queue" class="tab-panel hidden">
+        <div class="panel-header-row">
+          <h2>Active Downloads & Queue</h2>
+          <div class="queue-actions">
+            <button id="btn-clear-completed" class="btn btn-secondary btn-sm">Clear Completed</button>
+            <button id="btn-clear-failed" class="btn btn-secondary btn-sm">Clear Failed</button>
+          </div>
+        </div>
+
+        <div id="queue-empty-state" class="empty-state">
+          <p>Your download queue is empty. Go to the Downloader tab and paste a link to start downloading!</p>
+        </div>
+
+        <div id="queue-list" class="queue-container">
+          <!-- Queued items will render here dynamically -->
+        </div>
+      </section>
+
+      <!-- PANEL 3: HISTORY -->
+      <section id="panel-history" role="tabpanel" aria-labelledby="tab-history" class="tab-panel hidden">
+        <div class="panel-header-row">
+          <h2>Download History</h2>
+          <button id="btn-clear-history" class="btn btn-secondary btn-sm">Clear History</button>
+        </div>
+
+        <div class="card search-card">
+          <label for="input-search-history" class="input-label-sm">Search History</label>
+          <input type="text" id="input-search-history" class="text-input" placeholder="Search by title or format...">
+        </div>
+
+        <div id="history-empty-state" class="empty-state">
+          <p>No downloads recorded in your history yet.</p>
+        </div>
+
+        <div id="history-table-container" class="table-container hidden">
+          <table class="data-table" aria-label="Download History List">
+            <thead>
+              <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Title</th>
+                <th scope="col">Format</th>
+                <th scope="col">Status</th>
+                <th scope="col" class="actions-col">Action</th>
+              </tr>
+            </thead>
+            <tbody id="history-list">
+              <!-- Render history here -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- PANEL 4: SETTINGS -->
+      <section id="panel-settings" role="tabpanel" aria-labelledby="tab-settings" class="tab-panel hidden">
+        <h2>Application Settings</h2>
+
+        <!-- Save Defaults Card -->
+        <div class="card settings-card">
+          <h3>Download Preferences</h3>
+          
+          <div class="form-group margin-top-md">
+            <label for="setting-default-folder">Default Download Location</label>
+            <div class="input-row">
+              <input type="text" id="setting-default-folder" class="text-input" readonly aria-readonly="true">
+              <button id="btn-settings-browse" class="btn btn-secondary" aria-label="Browse default save folder">Browse...</button>
+            </div>
+          </div>
+
+          <div class="form-row margin-top-md">
+            <div class="form-group">
+              <label for="setting-default-video-quality">Default Video Quality</label>
+              <select id="setting-default-video-quality" class="select-input">
+                <option value="best">Best Available</option>
+                <option value="2160">4K (2160p)</option>
+                <option value="1440">2K (1440p)</option>
+                <option value="1080">Full HD (1080p)</option>
+                <option value="720">HD (720p)</option>
+                <option value="480">Standard (480p)</option>
+                <option value="360">Low (360p)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="setting-default-audio-format">Default Audio Format</label>
+              <select id="setting-default-audio-format" class="select-input">
+                <option value="mp3">MP3</option>
+                <option value="m4a">M4A</option>
+                <option value="wav">WAV</option>
+                <option value="flac">FLAC</option>
+                <option value="opus">Opus</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="checkbox-row margin-top-md">
+            <input type="checkbox" id="setting-check-duplicates" class="checkbox-input">
+            <label for="setting-check-duplicates" class="checkbox-label">Skip already downloaded files (Avoid duplicates)</label>
+          </div>
+        </div>
+
+        <!-- Download Constraints -->
+        <div class="card settings-card">
+          <h3>Network & Queue Controls</h3>
+          
+          <div class="form-group">
+            <label for="setting-simultaneous">Maximum Simultaneous Downloads (Default: 2)</label>
+            <select id="setting-simultaneous" class="select-input max-width-sm">
+              <option value="1">1</option>
+              <option value="2">2 (Recommended)</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+            </select>
+            <p class="field-help">Downloading too many files concurrently can cause YouTube to temporarily block your connection.</p>
+          </div>
+        </div>
+
+        <!-- Supporting Software Dependencies -->
+        <div class="card settings-card">
+          <h3>Downloader Engine & Helper Tools</h3>
+
+          <div class="engine-item">
+            <div class="engine-info">
+              <strong>yt-dlp Engine</strong>
+              <p id="yt-dlp-version-status">Status: Checking...</p>
+            </div>
+            <button id="btn-check-ytdlp" class="btn btn-secondary">Check for Engine Updates</button>
+          </div>
+
+          <div class="engine-item margin-top-md">
+            <div class="engine-info">
+              <strong>FFmpeg Media Tool (Required for HD downloads & conversions)</strong>
+              <p id="ffmpeg-version-status">Status: Checking...</p>
+            </div>
+            <button id="btn-install-ffmpeg" class="btn btn-secondary">Download & Configure FFmpeg</button>
+          </div>
+
+          <div class="checkbox-row margin-top-lg">
+            <input type="checkbox" id="setting-check-autoupdates" class="checkbox-input">
+            <label for="setting-check-autoupdates" class="checkbox-label">Automatically check for yt-dlp updates on startup</label>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- PLAYLIST VIDEO SELECTOR DIALOG (Traps focus for screen readers) -->
+  <dialog id="dlg-playlist" class="modal-dialog" aria-labelledby="dlg-playlist-title" aria-describedby="dlg-playlist-desc">
+    <div class="dialog-content">
+      <header class="dialog-header">
+        <h3 id="dlg-playlist-title">Select Videos to Download</h3>
+        <p id="dlg-playlist-desc" class="sr-only">Checkbox list of videos in the parsed playlist.</p>
+      </header>
+      
+      <!-- Selection filters -->
+      <div class="dialog-filters">
+        <button id="btn-select-all" class="btn btn-secondary btn-sm">Select All</button>
+        <button id="btn-select-none" class="btn btn-secondary btn-sm">Deselect All</button>
+        
+        <div class="range-group">
+          <label for="input-range-start" class="sr-only">Range Start Index</label>
+          <input type="number" id="input-range-start" class="text-input range-input" placeholder="Start Index" min="1">
+          <span aria-hidden="true">-</span>
+          <label for="input-range-end" class="sr-only">Range End Index</label>
+          <input type="number" id="input-range-end" class="text-input range-input" placeholder="End Index" min="1">
+          <button id="btn-select-range" class="btn btn-secondary btn-sm">Select Range</button>
+        </div>
+      </div>
+
+      <!-- Playlist items container -->
+      <div class="dialog-body">
+        <div class="checkbox-list-header">
+          <span class="col-check">Download?</span>
+          <span class="col-num">#</span>
+          <span class="col-title">Title</span>
+          <span class="col-duration">Duration</span>
+        </div>
+        <div id="playlist-checkbox-list" class="checkbox-list" role="group" aria-label="Playlist items">
+          <!-- Checkbox items dynamically populated -->
+        </div>
+      </div>
+
+      <footer class="dialog-footer">
+        <span id="selected-count-msg" aria-live="polite">0 videos selected</span>
+        <div class="dialog-actions">
+          <button id="btn-cancel-playlist-dlg" class="btn btn-secondary">Cancel</button>
+          <button id="btn-confirm-playlist-dlg" class="btn btn-success">Confirm Selection</button>
+        </div>
+      </footer>
+    </div>
+  </dialog>
+
+  <!-- UPDATE CONSENT DIALOG (Yes/No dialog for updates) -->
+  <dialog id="dlg-update" class="modal-dialog" aria-labelledby="dlg-update-title">
+    <div class="dialog-content max-width-sm">
+      <header class="dialog-header">
+        <h3 id="dlg-update-title">Engine Update Available</h3>
+      </header>
+      <div class="dialog-body text-center">
+        <p id="update-message-text">A newer version of the yt-dlp downloader engine is available. Would you like to update it now? This ensures maximum compatibility with YouTube.</p>
+        <p class="versions-comparison"><span id="update-current-ver">Current: --</span> ➔ <span id="update-latest-ver">Latest: --</span></p>
+      </div>
+      <footer class="dialog-footer flex-end">
+        <button id="btn-update-no" class="btn btn-secondary margin-right-sm">No, Later</button>
+        <button id="btn-update-yes" class="btn btn-primary">Yes, Update Now</button>
+      </footer>
+    </div>
+  </dialog>
+
+  <!-- INFO/CONFIRMATION MODAL -->
+  <dialog id="dlg-info" class="modal-dialog" aria-labelledby="dlg-info-title">
+    <div class="dialog-content max-width-sm">
+      <header class="dialog-header">
+        <h3 id="dlg-info-title">Information</h3>
+      </header>
+      <div class="dialog-body">
+        <p id="info-message-text">Message goes here...</p>
+        <!-- Download indicator for FFmpeg download -->
+        <div id="info-progress-container" class="progress-container margin-top-md hidden">
+          <div class="progress-bar-bg">
+            <div id="info-progress-bar" class="progress-bar" style="width: 0%" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+          <p id="info-progress-label" class="progress-label-text">Downloading: 0%</p>
+        </div>
+      </div>
+      <footer class="dialog-footer flex-end">
+        <button id="btn-info-close" class="btn btn-primary">OK</button>
+      </footer>
+    </div>
+  </dialog>
+
+</body>
+</html>
