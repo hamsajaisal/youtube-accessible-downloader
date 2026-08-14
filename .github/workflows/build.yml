@@ -29,7 +29,21 @@ jobs:
       run: dotnet restore
 
     - name: Publish Single-File Self-Contained App
-      run: dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:PublishReadyToRun=true -o publish
+      shell: pwsh
+      run: |
+        dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:PublishReadyToRun=true -o publish > build_log.txt 2>&1
+        if ($LASTEXITCODE -ne 0) {
+          Get-Content build_log.txt
+          exit $LASTEXITCODE
+        }
+
+    - name: Upload Build Log on Failure
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: dotnet-build-log
+        path: build_log.txt
+        retention-days: 1
 
     - name: Zip Standalone Portable Executable
       run: Compress-Archive -Path publish\YoutubeDownloader.exe -DestinationPath YouTube.Accessible.Downloader.Portable.zip
