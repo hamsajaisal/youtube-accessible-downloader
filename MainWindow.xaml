@@ -404,7 +404,7 @@
                         </GroupBox>
 
                         <!-- Section 2: Queue Constraints -->
-                        <GroupBox Header="Queue & Concurrency Controls">
+                        <GroupBox Header="Queue &amp; Concurrency Controls">
                             <StackPanel>
                                 <Label Content="Maximum Simultaneous Downloads:" Target="{Binding ElementName=ComboSimultaneous}"/>
                                 <ComboBox Name="ComboSimultaneous" Width="100" HorizontalAlignment="Left" SelectionChanged="ComboSimultaneous_Changed">
@@ -418,7 +418,7 @@
                         </GroupBox>
 
                         <!-- Section 3: Dependency Statuses -->
-                        <GroupBox Header="Downloader Engine & Helper Tools">
+                        <GroupBox Header="Downloader Engine &amp; Helper Tools">
                             <StackPanel>
                                 <!-- yt-dlp status -->
                                 <DockPanel Margin="0,5,0,10">
@@ -433,11 +433,11 @@
 
                                 <!-- FFmpeg status -->
                                 <DockPanel Margin="0,10,0,5">
-                                    <StackPanel VerticalAlignment="Center" Width="450">
-                                        <TextBlock Text="FFmpeg Audio Helper (Required for HD merging & conversions)" FontWeight="Bold"/>
-                                        <TextBlock Name="TxtFfmpegStatus" Text="Status: Checking..." Foreground="#666" TextWrapping="Wrap"/>
+                                    <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+                                        <TextBlock Text="FFmpeg Audio Helper (Required for HD merging &amp; conversions)" FontWeight="Bold"/>
+                                        <TextBlock Name="TxtFfmpegStatus" Text="Status: Checking..." Foreground="#666" FontSize="11" Margin="0,2,0,0"/>
                                     </StackPanel>
-                                    <Button Name="BtnDownloadFfmpeg" Content="Download & Configure" HorizontalAlignment="Right" Click="BtnDownloadFfmpeg_Click" VerticalAlignment="Center"/>
+                                    <Button Name="BtnDownloadFfmpeg" Content="Download &amp; Configure" HorizontalAlignment="Right" Click="BtnDownloadFfmpeg_Click" VerticalAlignment="Center"/>
                                 </DockPanel>
 
                                 <CheckBox Name="ChkAutoUpdate" Content="Automatically check for yt-dlp updates on startup" IsChecked="True" Checked="ChkAutoUpdate_Changed" Unchecked="ChkAutoUpdate_Changed" Margin="0,15,0,0"/>
