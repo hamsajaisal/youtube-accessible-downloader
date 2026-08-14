@@ -179,6 +179,20 @@ async function initApp() {
   loadHistory();
   
   announceToSR('YouTube Accessible Downloader launched. Paste a link to begin.');
+
+  // If FFmpeg is missing, prompt the user to download it automatically on startup
+  if (!globalSettings.ffmpegExists) {
+    setTimeout(() => {
+      const confirmFFmpeg = confirm('FFmpeg is missing. This helper is required to download high-quality videos (1080p, 4K) and convert audio formats.\n\nWould you like the application to download and configure FFmpeg automatically now?');
+      if (confirmFFmpeg) {
+        btnInstallFfmpeg.disabled = true;
+        announceToSR('Starting download of FFmpeg for Windows. This might take a few minutes depending on your internet connection...');
+        window.api.downloadFFmpeg().then(() => {
+          btnInstallFfmpeg.disabled = false;
+        });
+      }
+    }, 1500); // 1.5 second delay so they hear the startup announcement first
+  }
 }
 
 
