@@ -86,7 +86,7 @@
             <!-- TAB 1: DOWNLOADER -->
             <TabItem Header="_Downloader" Name="TabItemDownloader">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <StackPanel Padding="15">
+                    <StackPanel Margin="15">
                         
                         <!-- URL Input Group -->
                         <GroupBox Header="Analyze YouTube Link" BorderThickness="1">
@@ -234,7 +234,7 @@
 
             <!-- TAB 2: QUEUE -->
             <TabItem Header="Download _Queue">
-                <Grid Padding="15">
+                <Grid Margin="15">
                     <Grid.RowDefinitions>
                         <Grid.RowDefinition Height="Auto"/>
                         <Grid.RowDefinition Height="*"/>
@@ -307,7 +307,7 @@
 
             <!-- TAB 3: HISTORY -->
             <TabItem Header="_History">
-                <Grid Padding="15">
+                <Grid Margin="15">
                     <Grid.RowDefinitions>
                         <Grid.RowDefinition Height="Auto"/>
                         <Grid.RowDefinition Height="Auto"/>
@@ -351,7 +351,7 @@
             <!-- TAB 4: SETTINGS -->
             <TabItem Header="_Settings">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <StackPanel Padding="15">
+                    <StackPanel Margin="15">
                         
                         <!-- Section 1: Save Paths -->
                         <GroupBox Header="Download Preferences">
