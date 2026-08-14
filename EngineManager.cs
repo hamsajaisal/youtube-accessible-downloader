@@ -4,6 +4,7 @@ using System.IO.Compression;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using System.Text.Json;
 
 namespace YoutubeDownloader
 {
@@ -106,6 +107,48 @@ namespace YoutubeDownloader
                     return $"Failed to update yt-dlp: {ex.Message}";
                 }
             });
+        }
+
+        public static string AnalyzeUrl(string url)
+        {
+            if (!YtDlpExists)
+            {
+                return "{\"error\": \"yt-dlp engine is not installed.\"}";
+            }
+
+            try
+            {
+                var startInfo = new ProcessStartInfo
+                {
+                    FileName = YtDlpPath,
+                    Arguments = $"-J --flat-playlist --no-warnings \"{url}\"",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true
+                };
+
+                using (var process = Process.Start(startInfo))
+                {
+                    if (process == null) return "{\"error\": \"Failed to start analysis process.\"}";
+
+                    string output = process.StandardOutput.ReadToEnd();
+                    string error = process.StandardError.ReadToEnd();
+                    process.WaitForExit();
+
+                    if (process.ExitCode != 0)
+                    {
+                        string errMsg = string.IsNullOrWhiteSpace(error) ? "Unknown error from yt-dlp" : error;
+                        return $"{{\"error\": {JsonSerializer.Serialize(errMsg)}}}";
+                    }
+
+                    return output;
+                }
+            }
+            catch (Exception ex)
+            {
+                return $"{{\"error\": {JsonSerializer.Serialize(ex.Message)}}}";
+            }
         }
 
         private static async Task DownloadFileAsync(string url, string destinationPath, Action<int> progressCallback)

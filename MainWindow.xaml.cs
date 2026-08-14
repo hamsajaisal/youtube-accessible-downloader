@@ -107,7 +107,7 @@ namespace YoutubeDownloader
             
             bool isAdvanced = ChkAdvancedMode.IsChecked == true;
             SettingsManager.Current.SimpleMode = !isAdvanced;
-            SettingsManager.Current.Save();
+            SettingsManager.Save();
 
             GrpAdvanced.Visibility = isAdvanced ? Visibility.Visible : Visibility.Collapsed;
         }
@@ -258,7 +258,7 @@ namespace YoutubeDownloader
             {
                 TxtDefaultFolder.Text = dialog.FolderName;
                 SettingsManager.Current.DownloadFolder = dialog.FolderName;
-                SettingsManager.Current.Save();
+                SettingsManager.Save();
                 TxtSaveFolder.Text = dialog.FolderName;
             }
         }
@@ -421,7 +421,7 @@ namespace YoutubeDownloader
             if (ComboDefaultVideoQuality == null) return;
             var item = ComboDefaultVideoQuality.SelectedItem as ComboBoxItem;
             SettingsManager.Current.VideoQuality = item?.Tag as string ?? "best";
-            SettingsManager.Current.Save();
+            SettingsManager.Save();
         }
 
         private void ComboDefaultAudioFormat_Changed(object sender, SelectionChangedEventArgs e)
@@ -429,14 +429,14 @@ namespace YoutubeDownloader
             if (ComboDefaultAudioFormat == null) return;
             var item = ComboDefaultAudioFormat.SelectedItem as ComboBoxItem;
             SettingsManager.Current.AudioFormat = item?.Tag as string ?? "mp3";
-            SettingsManager.Current.Save();
+            SettingsManager.Save();
         }
 
         private void ChkSkipDuplicates_Changed(object sender, RoutedEventArgs e)
         {
             if (ChkSkipDuplicates == null) return;
             SettingsManager.Current.SkipDuplicates = ChkSkipDuplicates.IsChecked == true;
-            SettingsManager.Current.Save();
+            SettingsManager.Save();
         }
 
         private void ComboSimultaneous_Changed(object sender, SelectionChangedEventArgs e)
@@ -446,7 +446,7 @@ namespace YoutubeDownloader
             if (int.TryParse(item?.Tag as string, out int val))
             {
                 SettingsManager.Current.SimultaneousDownloads = val;
-                SettingsManager.Current.Save();
+                SettingsManager.Save();
             }
         }
 
@@ -454,7 +454,7 @@ namespace YoutubeDownloader
         {
             if (ChkAutoUpdate == null) return;
             SettingsManager.Current.AutoCheckUpdates = ChkAutoUpdate.IsChecked == true;
-            SettingsManager.Current.Save();
+            SettingsManager.Save();
         }
 
         private async void BtnUpdateYtDlp_Click(object sender, RoutedEventArgs e)
