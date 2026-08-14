@@ -236,8 +236,8 @@
             <TabItem Header="Download _Queue">
                 <Grid Margin="15">
                     <Grid.RowDefinitions>
-                        <Grid.RowDefinition Height="Auto"/>
-                        <Grid.RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
                     <DockPanel Grid.Row="0" Margin="0,0,0,10">
@@ -309,9 +309,9 @@
             <TabItem Header="_History">
                 <Grid Margin="15">
                     <Grid.RowDefinitions>
-                        <Grid.RowDefinition Height="Auto"/>
-                        <Grid.RowDefinition Height="Auto"/>
-                        <Grid.RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
                     <DockPanel Grid.Row="0" Margin="0,0,0,10">
