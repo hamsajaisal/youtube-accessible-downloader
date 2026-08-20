@@ -12,8 +12,8 @@ ArchitecturesAllowed=x64
 ArchitecturesInstallIn64BitMode=x64
 
 [Files]
-Source: "publish\YoutubeDownloader.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "publish\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
-Name: "{group}\YouTube Accessible Downloader"; Filename: "{app}\YoutubeDownloader.exe"
-Name: "{autodesktop}\YouTube Accessible Downloader"; Filename: "{app}\YoutubeDownloader.exe"
+Name: "{group}\YouTube Accessible Downloader"; Filename: "{app}\YoutubeDownloader.exe"; WorkingDir: "{app}"
+Name: "{autodesktop}\YouTube Accessible Downloader"; Filename: "{app}\YoutubeDownloader.exe"; WorkingDir: "{app}"
