@@ -1,6 +1,6 @@
 [Setup]
 AppName=YouTube Accessible Downloader
-AppVersion=2.0.0
+AppVersion=2.0.1
 DefaultDirName={autopf}\YouTube Accessible Downloader
 DefaultGroupName=YouTube Accessible Downloader
 UninstallDisplayIcon={app}\YoutubeDownloader.exe
